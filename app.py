@@ -285,7 +285,7 @@ class DocumentProcessor:
 
             chat_completion = self.client.chat.completions.create(
                 messages=[{"role": "user", "content": prompt_content}],
-                model="llama-3.1-70b-versatile",
+                model="gemma2-9b-it",
             )
             return chat_completion.choices[0].message.content
 
