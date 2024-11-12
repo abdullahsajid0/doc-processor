@@ -122,18 +122,7 @@ if uploaded_files:
         st.write("Combined Document Content:")
         st.write(response)
 
-    # Output format selection for download
-    output_format = st.selectbox("Download as", ["PDF", "Word"])
-
     # Generate downloadable PDF
-    if output_format == "PDF":
-        pdf_bytes = generate_pdf(response)
-        st.download_button(label="Download PDF", data=pdf_bytes, file_name="output.pdf", mime="application/pdf")
-
-    elif output_format == "Word":
-        word_bytes = BytesIO()
-        word_doc = Document()
-        word_doc.add_paragraph(response)
-        word_doc.save(word_bytes)
-        word_bytes.seek(0)
-        st.download_button(label="Download Word", data=word_bytes, file_name="output.docx", mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+    pdf_bytes = generate_pdf(response)
+    st.download_button(label="Download PDF", data=pdf_bytes, file_name="output.pdf", mime="application/pdf")
+  
