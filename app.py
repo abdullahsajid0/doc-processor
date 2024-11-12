@@ -87,9 +87,9 @@ if uploaded_files:
     combined_text = ""
     for file in uploaded_files:
         combined_text += extract_text(file) + "\n\n"
-
+    
     # Task selection
-    task = st.selectbox("Choose a task", ["Summarize", "Ask Questions", "Combine"])
+    task = st.radio("Choose a task", ["Summarize", "Ask Questions", "Combine"])
 
     # Initialize response variable
     response = ""
