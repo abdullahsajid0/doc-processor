@@ -94,19 +94,25 @@ if uploaded_files:
     # Initialize response variable
     response = ""
 
-    # Process based on selected task
+        # Process based on selected task
     if task == "Ask Questions":
         # Example hint questions based on content
-        hint_questions = [
-            "What are the main points?",
-            "Can you explain the key findings?",
-            "What are the recommendations?"
-        ]
+        hint_questions = {
+            0: "What are the main points?",
+            1: "Can you explain the key findings?",
+            2: "What are the recommendations?"
+        }
 
-        question = st.text_input("Enter your question here or select one below:")
-        for hint in hint_questions:
-            if st.button(hint):                   
-                question = hint
+        # Use segmented control for hint selection
+        selected_hint = st.segmented_control(
+            "Choose a hint question:",
+            options=hint_questions.keys(),
+            format_func=lambda option: hint_questions[option]
+        )
+        
+        # Prepopulate the question input box with the selected hint
+        question = hint_questions[selected_hint]
+        st.text_input("Enter your question here or select one below:", value=question)
 
         if st.button("Submit Question"):
             response = process_document(combined_text, task="ask_question", question=question)
