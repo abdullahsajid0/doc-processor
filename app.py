@@ -79,7 +79,7 @@ if uploaded_files:
         question = st.text_input("Enter your question here or select one below:")
         for hint in hint_questions:
             if st.button(hint):
-                st.text_input("Enter your question here or select one below:")                    
+                st.text_input("Enter your questio select one below:")                    
                 question = hint
 
         if st.button("Submit Question"):
