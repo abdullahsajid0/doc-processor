@@ -64,6 +64,9 @@ if uploaded_files:
     # Task selection
     task = st.selectbox("Choose a task", ["Summarize", "Ask Questions", "Combine"])
 
+    # Initialize response variable
+    response = ""
+
     # Process based on selected task
     if task == "Ask Questions":
         # Example hint questions based on content
@@ -88,9 +91,9 @@ if uploaded_files:
             st.write("Summary:", response)
     
     elif task == "Combine":
+        response = combined_text  # For Combine, response is simply the combined text
         st.write("Combined Document Content:")
-        st.write(combined_text)
-        response = combined_text  # For download functionality below
+        st.write(response)
 
     # Output format selection for download
     output_format = st.selectbox("Download as", ["PDF", "Word"])
