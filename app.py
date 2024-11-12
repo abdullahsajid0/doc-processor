@@ -393,6 +393,7 @@ def main():
             question_container = st.container()
             with question_container:
                 hint_questions = {
+                    "HEll":"Recommend the key topics or subjects I should prioritize to effectively prepare for the exam?",
                     "main_points": "What are the main points?",
                     "findings": "What are the key findings?",
                     "recommendations": "What are the recommendations?",
