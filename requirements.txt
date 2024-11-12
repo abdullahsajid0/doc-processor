@@ -1,0 +1,7 @@
+streamlit 
+groq 
+pdfplumber 
+python-pptx 
+pandas 
+python-docx 
+PyMuPDF
