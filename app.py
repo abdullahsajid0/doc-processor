@@ -35,7 +35,7 @@ def process_document(content, task="summarize", question=None):
     if task == "summarize":
         prompt_content = f"Summarize the following content:\n\n{content}"
     elif task == "ask_question" and question:
-        prompt_content = f"Answer the following question based on the content provided:\n\nContent:\n{content}\n\nQuestion: {question}"
+        prompt_content = f"Answer based on the content provided:\n\nContent:\n{content}\n\n the Question is: {question}"
     else:
         prompt_content = f"Combine the following content without changing in it and make sur no detail is missed while com bining and the data should also be sorted this the the content:\n\n{content}"
     
