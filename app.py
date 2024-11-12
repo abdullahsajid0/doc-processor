@@ -229,8 +229,68 @@ def generate_styled_pdf(title: str, content: str, timestamp: str) -> BytesIO:
     return buffer
 
 class DocumentProcessor:
-    # [Previous DocumentProcessor class code remains the same]
-    # ... 
+    def __init__(self, api_key: str):
+        self.client = Groq(api_key=api_key)
+        self.logger = logging.getLogger(__name__)
+
+    def process_file(self, file) -> dict:
+        """Process a single file and return metadata"""
+        start_time = time.time()
+        text = self.extract_text(file)
+        processing_time = time.time() - start_time
+        
+        return {
+            'filename': file.name,
+            'size': len(file.getvalue()),
+            'text_length': len(text),
+            'processing_time': processing_time,
+            'content': text
+        }
+
+    def extract_text(self, file) -> str:
+        try:
+            if file.type == "application/pdf":
+                with pdfplumber.open(file) as pdf:
+                    return "\n".join(page.extract_text() or "" for page in pdf.pages)
+            elif file.type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+                doc = Document(file)
+                return "\n".join(paragraph.text for paragraph in doc.paragraphs)
+            elif file.type == "application/vnd.openxmlformats-officedocument.presentationml.presentation":
+                ppt = Presentation(file)
+                return "\n".join(shape.text for slide in ppt.slides 
+                               for shape in slide.shapes if hasattr(shape, "text"))
+            elif file.type == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
+                df = pd.read_excel(file)
+                return df.to_string(index=False)
+            elif file.type in ["text/plain", "application/octet-stream"]:
+                return file.getvalue().decode("utf-8")
+            else:
+                return "Unsupported file format"
+        except Exception as e:
+            self.logger.error(f"Error processing file: {str(e)}")
+            return f"Error processing file: {str(e)}"
+
+    def process_document(self, content: str, task: str = "summarize", 
+                        question: Optional[str] = None) -> str:
+        try:
+            if not content.strip():
+                return "No content to process"
+
+            prompt_content = {
+                "summarize": f"Summarize the following content concisely:\n\n{content}",
+                "ask_question": f"Answer based on the content provided:\n\nContent:\n{content}\n\nQuestion: {question}",
+                "combine": f"Combine and sort the following content without losing details:\n\n{content}"
+            }.get(task, "Invalid task")
+
+            chat_completion = self.client.chat.completions.create(
+                messages=[{"role": "user", "content": prompt_content}],
+                model="llama-3.1-70b-versatile",
+            )
+            return chat_completion.choices[0].message.content
+
+        except Exception as e:
+            self.logger.error(f"Error in API call: {str(e)}")
+            return f"Error processing request: {str(e)}"
 
 def main():
     # Custom title with gradient background
