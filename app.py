@@ -21,8 +21,8 @@ st.set_page_config(
     page_title="Smart Document Processor",
     page_icon="📄",
     layout="wide",
-    initial_sidebar_state="expanded",
-    theme="light"
+    initial_sidebar_state="expanded"
+
 )
 
 # Custom CSS with mobile responsiveness
