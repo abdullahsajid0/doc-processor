@@ -114,6 +114,7 @@ if uploaded_files:
         question = hint_questions[selected_hint]
         st.text_input("Enter your question here or select one below:", value=question)
 
+           # Submit the question
         if st.button("Submit Question"):
             response = process_document(combined_text, task="ask_question", question=question)
             st.write("Answer:", response)
