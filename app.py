@@ -6,6 +6,8 @@ from pptx import Presentation
 import pandas as pd
 from docx import Document
 from io import BytesIO
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
 
 # Access the secret API key
 api_key = os.getenv("GROQ_API_KEY")
@@ -35,15 +37,40 @@ def process_document(content, task="summarize", question=None):
     if task == "summarize":
         prompt_content = f"Summarize the following content:\n\n{content}"
     elif task == "ask_question" and question:
-        prompt_content = f"Answer based on the content provided:\n\nContent:\n{content}\n\n the Question is: {question}"
+        prompt_content = f"Answer based on the content provided:\n\nContent:\n{content}\n\nThe question is: {question}"
     else:
-        prompt_content = f"Combine the following content without changing in it and make sur no detail is missed while com bining and the data should also be sorted this the the content:\n\n{content}"
+        prompt_content = f"Combine the following content without changing it and make sure no detail is missed while combining and the data should also be sorted:\n\n{content}"
     
     chat_completion = client.chat.completions.create(
         messages=[{"role": "user", "content": prompt_content}],
         model="llama-3.1-70b-versatile",
     )
     return chat_completion.choices[0].message.content
+
+# Function to generate PDF using reportlab
+def generate_pdf(response):
+    pdf_bytes = BytesIO()
+    c = canvas.Canvas(pdf_bytes, pagesize=letter)
+    width, height = letter
+    
+    c.setFont("Helvetica-Bold", 16)
+    c.drawString(72, height - 72, "Generated Response")
+    
+    c.setFont("Helvetica", 12)
+    text = c.beginText(72, height - 100)
+    text.setFont("Helvetica", 12)
+    text.setTextOrigin(72, height - 120)
+    
+    # Add the content from the response
+    for line in response.split('\n'):
+        text.textLine(line)
+    
+    c.drawText(text)
+    c.showPage()
+    c.save()
+
+    pdf_bytes.seek(0)
+    return pdf_bytes
 
 # Streamlit App UI
 st.title("Enhanced Document Processing with LLaMA")
@@ -98,13 +125,9 @@ if uploaded_files:
     # Output format selection for download
     output_format = st.selectbox("Download as", ["PDF", "Word"])
 
-    # Generate downloadable file based on response content
+    # Generate downloadable PDF
     if output_format == "PDF":
-        pdf_bytes = BytesIO()
-        pdf_doc = Document()
-        pdf_doc.add_paragraph(response)
-        pdf_doc.save(pdf_bytes)
-        pdf_bytes.seek(0)
+        pdf_bytes = generate_pdf(response)
         st.download_button(label="Download PDF", data=pdf_bytes, file_name="output.pdf", mime="application/pdf")
 
     elif output_format == "Word":
