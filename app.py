@@ -396,7 +396,7 @@ def main():
                     "HEll":"Recommend the key topics or subjects I should prioritize to effectively prepare for the exam?",
                     "main_points": "What are the main points?",
                     "findings": "What are the key findings?",
-                    "recommendations": "What are the recommendations?",
+                    #"recommendations": "What are the recommendations?",
                     "custom": "Ask your own question..."
                 }
                 
