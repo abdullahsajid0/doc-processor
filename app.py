@@ -37,7 +37,7 @@ def process_document(content, task="summarize", question=None):
     elif task == "ask_question" and question:
         prompt_content = f"Answer the following question based on the content provided:\n\nContent:\n{content}\n\nQuestion: {question}"
     else:
-        prompt_content = content  # For combine task, keep content as is
+        prompt_content = f"Combine the following content without changing in it and make sur no detail is missed while com bining and the data should also be sorted this the the content:\n\n{content}"
     
     chat_completion = client.chat.completions.create(
         messages=[{"role": "user", "content": prompt_content}],
@@ -79,6 +79,7 @@ if uploaded_files:
         question = st.text_input("Enter your question here or select one below:")
         for hint in hint_questions:
             if st.button(hint):
+                st.text_input("Enter your question here or select one below:")                    
                 question = hint
 
         if st.button("Submit Question"):
