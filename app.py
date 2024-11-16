@@ -19,159 +19,223 @@ import logging
 # Configure custom theme and styling
 st.set_page_config(
     page_title="Smart Document Processor",
-    page_icon="📄",
+    page_icon="📊",
     layout="wide",
     initial_sidebar_state="expanded"
-
 )
 
-# Custom CSS with mobile responsiveness
+# Enhanced CSS with animations and professional styling
 st.markdown("""
     <style>
         /* Global styles */
-        [data-testid="stAppViewContainer"] {
-            padding: 1rem;
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        
+        * {
+            font-family: 'Inter', sans-serif;
         }
         
-        @media (max-width: 768px) {
-            [data-testid="stAppViewContainer"] {
-                padding: 0.5rem;
-            }
+        [data-testid="stAppViewContainer"] {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
+            padding: 1.5rem;
         }
         
         /* Main container styling */
         .main {
-            padding: 1rem;
+            max-width: 1200px;
+            margin: 0 auto;
         }
         
-        /* Custom title styling */
+        /* Enhanced title container */
         .title-container {
-            background: linear-gradient(90deg, #1E88E5 0%, #1565C0 100%);
-            padding: 1.5rem 1rem;
-            border-radius: 10px;
-            margin-bottom: 1.5rem;
-            color: white;
+            background: linear-gradient(135deg, #2193b0 0%, #6dd5ed 100%);
+            padding: 2rem;
+            border-radius: 20px;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             text-align: center;
+            animation: fadeIn 0.8s ease-out;
         }
         
-        @media (max-width: 768px) {
-            .title-container {
-                padding: 1rem 0.5rem;
-                margin-bottom: 1rem;
-            }
-            .title-container h1 {
-                font-size: 1.5rem;
-            }
+        .title-container h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(120deg, #ffffff 0%, #f0f0f0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
         
-        /* File uploader styling */
-        .uploadedFile {
-            background-color: #f8f9fa;
-            border-radius: 10px;
-            padding: 0.8rem;
-            margin: 0.8rem 0;
-            border: 2px dashed #1E88E5;
+        .title-container p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.1rem;
+            font-weight: 500;
         }
         
-        /* Custom card styling */
+        /* Enhanced card styling */
         .stCard {
-            border-radius: 15px;
-            padding: 1.2rem;
             background: white;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            margin: 0.8rem 0;
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+            margin: 1.2rem 0;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            animation: slideUp 0.5s ease-out;
         }
         
-        @media (max-width: 768px) {
-            .stCard {
-                padding: 1rem;
-                margin: 0.5rem 0;
-            }
+        .stCard:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
         }
         
-        /* Button styling */
+        /* File uploader enhancements */
+        .uploadedFile {
+            background: rgba(33, 147, 176, 0.05);
+            border-radius: 15px;
+            padding: 1rem;
+            margin: 1rem 0;
+            border: 2px dashed #2193b0;
+            transition: all 0.3s ease;
+        }
+        
+        .uploadedFile:hover {
+            background: rgba(33, 147, 176, 0.1);
+            border-color: #6dd5ed;
+        }
+        
+        /* Enhanced metric cards */
+        .metric-container {
+            background: white;
+            padding: 1.2rem;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease;
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        .metric-container:hover {
+            transform: translateY(-3px);
+        }
+        
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2193b0;
+            margin-bottom: 0.3rem;
+        }
+        
+        .metric-label {
+            color: #666;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        /* Enhanced buttons */
         .stButton>button {
-            width: 100%;
-            background: linear-gradient(90deg, #1E88E5 0%, #1565C0 100%);
+            background: linear-gradient(135deg, #2193b0 0%, #6dd5ed 100%);
             color: white;
-            border-radius: 25px;
-            padding: 0.5rem;
+            border-radius: 12px;
+            padding: 0.8rem 1.5rem;
+            font-weight: 600;
             border: none;
-            transition: all 0.3s;
-            margin: 0.5rem 0;
-        }
-        
-        .download-button {
-            background: linear-gradient(90deg, #43A047 0%, #2E7D32 100%) !important;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(33, 147, 176, 0.2);
+            width: auto;
+            min-width: 150px;
         }
         
         .stButton>button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(30, 136, 229, 0.3);
+            box-shadow: 0 6px 20px rgba(33, 147, 176, 0.3);
         }
         
-        /* Metric cards for mobile */
-        .metric-container {
-            background: #f8f9fa;
-            padding: 0.8rem;
-            border-radius: 10px;
-            text-align: center;
-            margin: 0.4rem 0;
+        /* Download button special styling */
+        .download-button {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%) !important;
         }
         
-        @media (max-width: 768px) {
-            .metric-container {
-                padding: 0.6rem;
-                margin: 0.3rem 0;
-            }
-            .metric-value {
-                font-size: 1.5rem !important;
-            }
-            .metric-label {
-                font-size: 0.8rem !important;
-            }
-        }
-        
-        /* Response container */
+        /* Enhanced response container */
         .response-container {
-            background: #f8f9fa;
-            padding: 1rem;
-            border-radius: 10px;
-            margin: 1rem 0;
-            border-left: 4px solid #1E88E5;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin: 1.2rem 0;
+            border-left: 5px solid #2193b0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            animation: slideIn 0.5s ease-out;
         }
         
-        @media (max-width: 768px) {
-            .response-container {
-                padding: 0.8rem;
-                margin: 0.8rem 0;
+        .response-container h4 {
+            color: #2193b0;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+        
+        /* Radio button enhancements */
+        .stRadio > div {
+            background: white;
+            padding: 1rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        /* Progress bar enhancement */
+        .stProgress > div > div {
+            background: linear-gradient(135deg, #2193b0 0%, #6dd5ed 100%);
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideUp {
+            from { 
+                opacity: 0;
+                transform: translateY(20px);
             }
-        }
-        
-        /* Toast messages */
-        .toast {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            padding: 1rem;
-            border-radius: 10px;
-            background: #4CAF50;
-            color: white;
-            z-index: 9999;
-            animation: slideIn 0.3s ease-out;
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
         
         @keyframes slideIn {
-            from {
-                transform: translateX(100%);
+            from { 
+                opacity: 0;
+                transform: translateX(-20px);
             }
-            to {
+            to { 
+                opacity: 1;
                 transform: translateX(0);
+            }
+        }
+        
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            [data-testid="stAppViewContainer"] {
+                padding: 1rem;
+            }
+            
+            .title-container {
+                padding: 1.5rem 1rem;
+            }
+            
+            .title-container h1 {
+                font-size: 1.8rem;
+            }
+            
+            .stCard {
+                padding: 1rem;
+            }
+            
+            .metric-value {
+                font-size: 1.5rem;
             }
         }
     </style>
 """, unsafe_allow_html=True)
-
 def generate_styled_pdf(title: str, content: str, timestamp: str) -> BytesIO:
     """Generate a beautifully styled PDF with the response content."""
     buffer = BytesIO()
