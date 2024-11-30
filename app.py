@@ -295,8 +295,12 @@ def generate_styled_pdf(title: str, content: str, timestamp: str) -> BytesIO:
 
 class DocumentProcessor:
     def __init__(self, api_key: str):
-        self.client = Groq(api_key=api_key)
-        self.logger = logging.getLogger(__name__)
+        try:
+            self.client = Groq(api_key=api_key)
+            self.logger.info("Groq client initialized successfully.")
+        except Exception as e:
+            self.logger.error(f"Failed to initialize Groq client: {e}")
+
 
     def process_file(self, file) -> dict:
         """Process a single file and return metadata"""
