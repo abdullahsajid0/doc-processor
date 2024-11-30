@@ -295,13 +295,13 @@ def generate_styled_pdf(title: str, content: str, timestamp: str) -> BytesIO:
 
 class DocumentProcessor:
     def __init__(self, api_key: str):
-        try:
-            self.client = Groq(api_key=api_key)
-            self.logger.info("Groq client initialized successfully.")
-        except Exception as e:
-            self.logger.error(f"Failed to initialize Groq client: {e}")
-
-
+        self.client = Groq(api_key=api_key)
+        self.logger = logging.getLogger("DocumentProcessor")
+        self.logger.setLevel(logging.INFO)
+        handler = logging.StreamHandler()
+        handler.setFormatter(logging.Formatter("%(asctime)s - %(levelname)s - %(message)s"))
+        self.logger.addHandler(handler)
+        self.logger.info("Groq client initialized successfully.")
     def process_file(self, file) -> dict:
         """Process a single file and return metadata"""
         start_time = time.time()
@@ -353,7 +353,7 @@ class DocumentProcessor:
 
             chat_completion = self.client.chat.completions.create(
                 messages=[{"role": "user", "content": prompt_content}],
-                model="llama-3.1-70b-versatile",
+                model="llama3-8b-8192",
             )
             return chat_completion.choices[0].message.content
 
@@ -505,7 +505,7 @@ def main():
                     """, unsafe_allow_html=True)
 
         elif task == "Combine":
-            response = combined_text
+            response = processor.process_document(combined_text, task="combine")
             st.markdown(f"""
                 <div class="response-container">
                     <h4>Combined Content:</h4>
@@ -524,10 +524,10 @@ def main():
             st.download_button(
                 label="📥 Download as PDF",
                 data=pdf_buffer,
-                file_name=f"document_{task.lower()}_results.pdf",
+                file_name="response.pdf",
                 mime="application/pdf",
                 key="download_button",
-                help="Click to download the results as a PDF file"
+                help="Download the response in a professional PDF format"
             )
 
         st.markdown("</div>", unsafe_allow_html=True)
