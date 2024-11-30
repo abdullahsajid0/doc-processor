@@ -29,22 +29,22 @@ st.markdown("""
     <style>
         /* Global styles */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-        
+
         * {
             font-family: 'Inter', sans-serif;
         }
-        
+
         [data-testid="stAppViewContainer"] {
             background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
             padding: 1.5rem;
         }
-        
+
         /* Main container styling */
         .main {
             max-width: 1200px;
             margin: 0 auto;
         }
-        
+
         /* Enhanced title container */
         .title-container {
             background: linear-gradient(135deg, #2193b0 0%, #6dd5ed 100%);
@@ -55,7 +55,7 @@ st.markdown("""
             text-align: center;
             animation: fadeIn 0.8s ease-out;
         }
-        
+
         .title-container h1 {
             font-size: 2.5rem;
             font-weight: 700;
@@ -64,13 +64,13 @@ st.markdown("""
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        
+
         .title-container p {
             color: rgba(255, 255, 255, 0.9);
             font-size: 1.1rem;
             font-weight: 500;
         }
-        
+
         /* Enhanced card styling */
         .stCard {
             background: white;
@@ -81,12 +81,12 @@ st.markdown("""
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             animation: slideUp 0.5s ease-out;
         }
-        
+
         .stCard:hover {
             transform: translateY(-5px);
             box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
         }
-        
+
         /* File uploader enhancements */
         .uploadedFile {
             background: rgba(33, 147, 176, 0.05);
@@ -96,12 +96,12 @@ st.markdown("""
             border: 2px dashed #2193b0;
             transition: all 0.3s ease;
         }
-        
+
         .uploadedFile:hover {
             background: rgba(33, 147, 176, 0.1);
             border-color: #6dd5ed;
         }
-        
+
         /* Enhanced metric cards */
         .metric-container {
             background: white;
@@ -112,24 +112,24 @@ st.markdown("""
             transition: transform 0.3s ease;
             animation: fadeIn 0.5s ease-out;
         }
-        
+
         .metric-container:hover {
             transform: translateY(-3px);
         }
-        
+
         .metric-value {
             font-size: 2rem;
             font-weight: 700;
             color: #2193b0;
             margin-bottom: 0.3rem;
         }
-        
+
         .metric-label {
             color: #666;
             font-size: 0.9rem;
             font-weight: 500;
         }
-        
+
         /* Enhanced buttons */
         .stButton>button {
             background: linear-gradient(135deg, #2193b0 0%, #6dd5ed 100%);
@@ -143,17 +143,17 @@ st.markdown("""
             width: auto;
             min-width: 150px;
         }
-        
+
         .stButton>button:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(33, 147, 176, 0.3);
         }
-        
+
         /* Download button special styling */
         .download-button {
             background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%) !important;
         }
-        
+
         /* Enhanced response container */
         .response-container {
             background: white;
@@ -164,13 +164,13 @@ st.markdown("""
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
             animation: slideIn 0.5s ease-out;
         }
-        
+
         .response-container h4 {
             color: #2193b0;
             font-size: 1.2rem;
             margin-bottom: 1rem;
         }
-        
+
         /* Radio button enhancements */
         .stRadio > div {
             background: white;
@@ -178,58 +178,58 @@ st.markdown("""
             border-radius: 12px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
         }
-        
+
         /* Progress bar enhancement */
         .stProgress > div > div {
             background: linear-gradient(135deg, #2193b0 0%, #6dd5ed 100%);
         }
-        
+
         /* Animations */
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
         }
-        
+
         @keyframes slideUp {
-            from { 
+            from {
                 opacity: 0;
                 transform: translateY(20px);
             }
-            to { 
+            to {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
-        
+
         @keyframes slideIn {
-            from { 
+            from {
                 opacity: 0;
                 transform: translateX(-20px);
             }
-            to { 
+            to {
                 opacity: 1;
                 transform: translateX(0);
             }
         }
-        
+
         /* Mobile responsiveness */
         @media (max-width: 768px) {
             [data-testid="stAppViewContainer"] {
                 padding: 1rem;
             }
-            
+
             .title-container {
                 padding: 1.5rem 1rem;
             }
-            
+
             .title-container h1 {
                 font-size: 1.8rem;
             }
-            
+
             .stCard {
                 padding: 1rem;
             }
-            
+
             .metric-value {
                 font-size: 1.5rem;
             }
@@ -247,7 +247,7 @@ def generate_styled_pdf(title: str, content: str, timestamp: str) -> BytesIO:
         topMargin=72,
         bottomMargin=72
     )
-    
+
     # Styles
     styles = getSampleStyleSheet()
     title_style = ParagraphStyle(
@@ -257,14 +257,14 @@ def generate_styled_pdf(title: str, content: str, timestamp: str) -> BytesIO:
         spaceAfter=30,
         textColor=colors.HexColor('#1E88E5')
     )
-    
+
     timestamp_style = ParagraphStyle(
         'Timestamp',
         parent=styles['Normal'],
         fontSize=10,
         textColor=colors.gray
     )
-    
+
     content_style = ParagraphStyle(
         'CustomBody',
         parent=styles['Normal'],
@@ -272,22 +272,22 @@ def generate_styled_pdf(title: str, content: str, timestamp: str) -> BytesIO:
         spaceAfter=12,
         leading=14
     )
-    
+
     # Build the PDF content
     elements = []
-    
+
     # Title
     elements.append(Paragraph(title, title_style))
     elements.append(Paragraph(f"Generated on: {timestamp}", timestamp_style))
     elements.append(Spacer(1, 20))
-    
+
     # Content - split into paragraphs
     paragraphs = content.split('\n\n')
     for para in paragraphs:
         if para.strip():
             elements.append(Paragraph(para, content_style))
             elements.append(Spacer(1, 12))
-    
+
     # Build the PDF
     doc.build(elements)
     buffer.seek(0)
@@ -295,22 +295,15 @@ def generate_styled_pdf(title: str, content: str, timestamp: str) -> BytesIO:
 
 class DocumentProcessor:
     def __init__(self, api_key: str):
-        try:
-            self.client = Groq(
-                api_key=api_key,
-                # Optional: Add timeout or other configurations
-                timeout=30.0
-            )
-        except Exception as e:
-            st.error(f"Failed to initialize Groq client: {e}")
-            raise
+        self.client = Groq(api_key=api_key)
+        self.logger = logging.getLogger(__name__)
 
     def process_file(self, file) -> dict:
         """Process a single file and return metadata"""
         start_time = time.time()
         text = self.extract_text(file)
         processing_time = time.time() - start_time
-        
+
         return {
             'filename': file.name,
             'size': len(file.getvalue()),
@@ -329,7 +322,7 @@ class DocumentProcessor:
                 return "\n".join(paragraph.text for paragraph in doc.paragraphs)
             elif file.type == "application/vnd.openxmlformats-officedocument.presentationml.presentation":
                 ppt = Presentation(file)
-                return "\n".join(shape.text for slide in ppt.slides 
+                return "\n".join(shape.text for slide in ppt.slides
                                for shape in slide.shapes if hasattr(shape, "text"))
             elif file.type == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
                 df = pd.read_excel(file)
@@ -342,7 +335,7 @@ class DocumentProcessor:
             self.logger.error(f"Error processing file: {str(e)}")
             return f"Error processing file: {str(e)}"
 
-    def process_document(self, content: str, task: str = "summarize", 
+    def process_document(self, content: str, task: str = "summarize",
                         question: Optional[str] = None) -> str:
         try:
             if not content.strip():
@@ -378,12 +371,12 @@ def main():
     if not api_key:
         st.error("🔑 GROQ_API_KEY environment variable not set")
         return
-        
+
     processor = DocumentProcessor(api_key)
-    
+
     # Use columns for layout, but adjust for mobile
     use_columns = True if st.session_state.get('browser_width', 1000) > 768 else False
-    
+
     if use_columns:
         col1, col2 = st.columns([2, 1])
         upload_container = col1
@@ -391,17 +384,17 @@ def main():
     else:
         upload_container = st
         stats_container = st
-    
+
     with upload_container:
         st.markdown("""
             <div class="stCard">
                 <h3>📎 Upload Your Multiple Documents Below 👇 </h3>
             </div>
         """, unsafe_allow_html=True)
-        
+
         uploaded_files = st.file_uploader(
-            "", 
-            type=["pdf", "pptx", "docx", "xlsx", "txt", "py", "js", "html", "java", "cpp"], 
+            "",
+            type=["pdf", "pptx", "docx", "xlsx", "txt", "py", "js", "html", "java", "cpp"],
             accept_multiple_files=True
         )
 
@@ -409,7 +402,7 @@ def main():
         if uploaded_files:
             total_files = len(uploaded_files)
             total_size = sum(len(file.getvalue()) for file in uploaded_files)
-            
+
             metrics_container = st.container()
             with metrics_container:
                 if use_columns:
@@ -442,24 +435,24 @@ def main():
 
     if uploaded_files:
         st.markdown("<div class='stCard'>", unsafe_allow_html=True)
-        
+
         # Process files with progress bar
         progress_text = "Processing your documents..."
         progress_bar = st.progress(0)
-        
+
         processed_files = []
         for idx, file in enumerate(uploaded_files):
             processed = processor.process_file(file)
             processed_files.append(processed)
             progress_bar.progress((idx + 1) / len(uploaded_files))
-            
+
         combined_text = "\n\n".join(file['content'] for file in processed_files)
-        
+
         # Task selection
         task = st.radio("🎯 Select Task", ["Summarize", "Ask Questions", "Combine"])
-        
+
         response = None  # Store the response for PDF generation
-        
+
         if task == "Ask Questions":
             question_container = st.container()
             with question_container:
@@ -470,22 +463,22 @@ def main():
                     #"recommendations": "What are the recommendations?",
                     "custom": "Ask your own question..."
                 }
-                
+
                 selected_hint = st.selectbox(
                     "💭 Question Type",
                     options=list(hint_questions.keys()),
                     format_func=lambda x: hint_questions[x]
                 )
-                
+
                 if selected_hint == "custom":
                     question = st.text_input("🤔 Your Question:")
                 else:
                     question = hint_questions[selected_hint]
-                
+
                 if st.button("🚀 Get Answer"):
                     with st.spinner("🔍 Analyzing..."):
                         response = processor.process_document(
-                            combined_text, 
+                            combined_text,
                             task="ask_question",
                             question=question
                         )
@@ -495,7 +488,7 @@ def main():
                                 <p>{response}</p>
                             </div>
                         """, unsafe_allow_html=True)
-                        
+
         elif task == "Summarize":
             if st.button("📝 Generate Summary"):
                 with st.spinner("✍️ Creating summary..."):
@@ -506,7 +499,7 @@ def main():
                             <p>{response}</p>
                         </div>
                     """, unsafe_allow_html=True)
-                    
+
         elif task == "Combine":
             response = combined_text
             st.markdown(f"""
@@ -515,7 +508,7 @@ def main():
                     <p>{response}</p>
                 </div>
             """, unsafe_allow_html=True)
-        
+
         # PDF Download button if there's a response
         if response:
             pdf_buffer = generate_styled_pdf(
@@ -523,7 +516,7 @@ def main():
                 response,
                 time.strftime("%Y-%m-%d %H:%M:%S")
             )
-            
+
             st.download_button(
                 label="📥 Download as PDF",
                 data=pdf_buffer,
@@ -532,7 +525,7 @@ def main():
                 key="download_button",
                 help="Click to download the results as a PDF file"
             )
-        
+
         st.markdown("</div>", unsafe_allow_html=True)
 
 if __name__ == "__main__":
