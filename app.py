@@ -250,6 +250,8 @@ def generate_styled_pdf(title: str, content: str, timestamp: str) -> BytesIO:
 
     # Styles
     styles = getSampleStyleSheet()
+    
+    # Custom title style
     title_style = ParagraphStyle(
         'CustomTitle',
         parent=styles['Heading1'],
@@ -258,6 +260,7 @@ def generate_styled_pdf(title: str, content: str, timestamp: str) -> BytesIO:
         textColor=colors.HexColor('#1E88E5')
     )
 
+    # Timestamp style
     timestamp_style = ParagraphStyle(
         'Timestamp',
         parent=styles['Normal'],
@@ -265,6 +268,7 @@ def generate_styled_pdf(title: str, content: str, timestamp: str) -> BytesIO:
         textColor=colors.gray
     )
 
+    # Content body style
     content_style = ParagraphStyle(
         'CustomBody',
         parent=styles['Normal'],
@@ -282,23 +286,18 @@ def generate_styled_pdf(title: str, content: str, timestamp: str) -> BytesIO:
     elements.append(Spacer(1, 20))
 
     # Content - split into paragraphs and format as needed
-    paragraphs = content.split('\n\n')
+    paragraphs = content.split('\n\n')  # Assuming content is divided into paragraphs
     for para in paragraphs:
         if para.strip():
-            # Apply bold formatting for **text**
-            para = para.replace("**", "<b>").replace("**", "</b>")
-            # Replace line breaks within each item with a space to maintain list formatting
-            para = para.replace("\n", " ")
-
-            # Add paragraph with custom content style
             elements.append(Paragraph(para, content_style))
             elements.append(Spacer(1, 12))
 
     # Build the PDF
     doc.build(elements)
+    
     buffer.seek(0)
     return buffer
-
+    
 class DocumentProcessor:
     def __init__(self, api_key: str):
         self.client = Groq(api_key=api_key)
