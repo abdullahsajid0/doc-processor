@@ -237,7 +237,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 def generate_styled_pdf(title: str, content: str, timestamp: str) -> BytesIO:
-    """Generate a beautifully styled PDF with the response content."""
+    """Generate a styled PDF with bullet points and text formatting."""
     buffer = BytesIO()
     doc = SimpleDocTemplate(
         buffer,
@@ -285,22 +285,22 @@ def generate_styled_pdf(title: str, content: str, timestamp: str) -> BytesIO:
     elements.append(Paragraph(f"Generated on: {timestamp}", timestamp_style))
     elements.append(Spacer(1, 20))
 
-    # Format content for bullet points, bold text, and paragraphs
-    formatted_content = content.replace("\n\n", "<br/><br/>")  # Split paragraphs
+    # Process content into a ListFlowable (for bullet points)
+    content_lines = content.splitlines()
 
-    # Handle bullet points in content
-    formatted_content = formatted_content.replace(
-        "- ", "<b>-</b> "
-    )  # Bold bullet points or numbering
+    # List to hold bullet points
+    bullet_list = []
 
-    # Handle numbered lists
-    formatted_content = formatted_content.replace(
-        "1.", "<b>1.</b> "
-    )  # Bold numbering for lists
+    for line in content_lines:
+        if line.strip().startswith("-"):
+            bullet_list.append(ListItem(Paragraph(line[2:].strip(), content_style)))
+        else:
+            elements.append(Paragraph(line, content_style))
     
-    # Add formatted content as a Paragraph
-    elements.append(Paragraph(formatted_content, content_style))
-    
+    if bullet_list:
+        bullet_flowable = ListFlowable(bullet_list, bulletType='bullet', start='1', style=content_style)
+        elements.append(bullet_flowable)
+
     # Build the PDF
     doc.build(elements)
 
