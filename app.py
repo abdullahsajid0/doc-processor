@@ -250,7 +250,7 @@ def generate_styled_pdf(title: str, content: str, timestamp: str) -> BytesIO:
 
     # Styles
     styles = getSampleStyleSheet()
-    
+
     # Custom title style
     title_style = ParagraphStyle(
         'CustomTitle',
@@ -285,16 +285,25 @@ def generate_styled_pdf(title: str, content: str, timestamp: str) -> BytesIO:
     elements.append(Paragraph(f"Generated on: {timestamp}", timestamp_style))
     elements.append(Spacer(1, 20))
 
-    # Content - split into paragraphs and format as needed
-    paragraphs = content.split('\n\n')  # Assuming content is divided into paragraphs
-    for para in paragraphs:
-        if para.strip():
-            elements.append(Paragraph(para, content_style))
-            elements.append(Spacer(1, 12))
+    # Format content for bullet points, bold text, and paragraphs
+    formatted_content = content.replace("\n\n", "<br/><br/>")  # Split paragraphs
 
+    # Handle bullet points in content
+    formatted_content = formatted_content.replace(
+        "- ", "<b>-</b> "
+    )  # Bold bullet points or numbering
+
+    # Handle numbered lists
+    formatted_content = formatted_content.replace(
+        "1.", "<b>1.</b> "
+    )  # Bold numbering for lists
+    
+    # Add formatted content as a Paragraph
+    elements.append(Paragraph(formatted_content, content_style))
+    
     # Build the PDF
     doc.build(elements)
-    
+
     buffer.seek(0)
     return buffer
     
