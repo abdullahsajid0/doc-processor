@@ -281,10 +281,16 @@ def generate_styled_pdf(title: str, content: str, timestamp: str) -> BytesIO:
     elements.append(Paragraph(f"Generated on: {timestamp}", timestamp_style))
     elements.append(Spacer(1, 20))
 
-    # Content - split into paragraphs
+    # Content - split into paragraphs and format as needed
     paragraphs = content.split('\n\n')
     for para in paragraphs:
         if para.strip():
+            # Apply bold formatting for **text**
+            para = para.replace("**", "<b>").replace("**", "</b>")
+            # Replace line breaks within each item with a space to maintain list formatting
+            para = para.replace("\n", " ")
+
+            # Add paragraph with custom content style
             elements.append(Paragraph(para, content_style))
             elements.append(Spacer(1, 12))
 
