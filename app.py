@@ -1,4 +1,5 @@
 import os
+import re
 import streamlit as st
 from groq import Groq
 import pdfplumber
