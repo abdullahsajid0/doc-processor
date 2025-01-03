@@ -248,7 +248,7 @@ import re
 
 
 def generate_styled_pdf(title: str, content: str, timestamp: str) -> BytesIO:
-    """Generate a styled PDF with bullets, bold text, and code formatting."""
+    """Generate a styled PDF with bullets, bold text, and properly formatted code blocks."""
     buffer = BytesIO()
     doc = SimpleDocTemplate(
         buffer,
@@ -315,6 +315,7 @@ def generate_styled_pdf(title: str, content: str, timestamp: str) -> BytesIO:
     # Process content line by line
     content_lines = content.splitlines()
     bullet_items = []
+    code_lines = []
     in_code_block = False  # Track code block state
 
     for line in content_lines:
@@ -322,13 +323,14 @@ def generate_styled_pdf(title: str, content: str, timestamp: str) -> BytesIO:
 
         if stripped_line.startswith("```"):  # Handle code block start/end
             in_code_block = not in_code_block
-            if not in_code_block and bullet_items:  # Close any open bullet lists
-                elements.append(ListFlowable(bullet_items, bulletType='bullet', style=bullet_list_style))
-                bullet_items = []
+            if not in_code_block and code_lines:  # Close and add the code block
+                code_block = "<br/>".join(code_lines)  # Preserve line breaks in code
+                elements.append(Paragraph(code_block, code_style))
+                code_lines = []  # Reset code lines for the next block
             continue
 
-        if in_code_block:  # Add code block lines
-            elements.append(Paragraph(stripped_line, code_style))
+        if in_code_block:  # Collect lines for the code block
+            code_lines.append(stripped_line)
             continue
 
         if stripped_line.startswith("•"):  # Handle bullets
@@ -345,6 +347,11 @@ def generate_styled_pdf(title: str, content: str, timestamp: str) -> BytesIO:
     # Add any remaining bullet list
     if bullet_items:
         elements.append(ListFlowable(bullet_items, bulletType='bullet', style=bullet_list_style))
+
+    # Add remaining code block if the file ends with it
+    if code_lines:
+        code_block = "<br/>".join(code_lines)
+        elements.append(Paragraph(code_block, code_style))
 
     # Build the PDF
     doc.build(elements)
