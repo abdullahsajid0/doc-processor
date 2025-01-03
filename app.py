@@ -238,8 +238,17 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
+from io import BytesIO
+from reportlab.lib.pagesizes import letter
+from reportlab.lib import colors
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle, ListStyle
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, ListFlowable, ListItem
+from reportlab.platypus.tables import Table, TableStyle
+import re
+
+
 def generate_styled_pdf(title: str, content: str, timestamp: str) -> BytesIO:
-    """Generate a styled PDF with support for bullet points, bold text, numbered lists, and code blocks."""
+    """Generate a styled PDF with bullets, bold text, and code formatting."""
     buffer = BytesIO()
     doc = SimpleDocTemplate(
         buffer,
@@ -279,73 +288,69 @@ def generate_styled_pdf(title: str, content: str, timestamp: str) -> BytesIO:
         leading=14
     )
 
-    # Code block style
+    # Bullet list style
+    bullet_list_style = ListStyle('BulletListStyle')
+
+    # Code style
     code_style = ParagraphStyle(
         'CodeStyle',
-        parent=styles['Normal'],
-        fontName='Courier',  # Monospaced font
-        fontSize=11,
-        textColor=colors.HexColor('#2E7D32'),
+        parent=styles['BodyText'],
+        fontName='Courier',
+        fontSize=10,
+        textColor=colors.HexColor('#2C3E50'),
         backColor=colors.HexColor('#F4F4F4'),
-        leftIndent=10,
-        rightIndent=10,
+        leading=12,
         spaceBefore=6,
-        spaceAfter=6
+        spaceAfter=6,
+        leftIndent=20
     )
 
-    # Bullet list style
-    list_style = ListStyle('CustomListStyle')
-
-    # Build the PDF content
     elements = []
 
-    # Title
+    # Add title and timestamp
     elements.append(Paragraph(title, title_style))
     elements.append(Paragraph(f"Generated on: {timestamp}", timestamp_style))
     elements.append(Spacer(1, 20))
 
-    # Process content
+    # Process content line by line
     content_lines = content.splitlines()
-
-    # Track bullet points and code blocks
-    bullet_list = []
-    is_code_block = False
-    code_block = ""
+    bullet_items = []
+    in_code_block = False  # Track code block state
 
     for line in content_lines:
         stripped_line = line.strip()
 
-        if stripped_line.startswith("```"):  # Detect start or end of code block
-            if is_code_block:  # End of code block
-                elements.append(Preformatted(code_block.strip(), code_style))
-                code_block = ""
-                is_code_block = False
-            else:  # Start of code block
-                is_code_block = True
-        elif is_code_block:  # Add lines to code block
-            code_block += line + "\n"
-        elif stripped_line.startswith("-"):  # Bullet point
-            bullet_list.append(ListItem(Paragraph(stripped_line[2:].strip(), content_style)))
-        elif re.match(r"\d+\.", stripped_line):  # Numbered list
-            bullet_list.append(ListItem(Paragraph(stripped_line, content_style)))
-        elif "**" in stripped_line:  # Bold text
+        if stripped_line.startswith("```"):  # Handle code block start/end
+            in_code_block = not in_code_block
+            if not in_code_block and bullet_items:  # Close any open bullet lists
+                elements.append(ListFlowable(bullet_items, bulletType='bullet', style=bullet_list_style))
+                bullet_items = []
+            continue
+
+        if in_code_block:  # Add code block lines
+            elements.append(Paragraph(stripped_line, code_style))
+            continue
+
+        if stripped_line.startswith("•"):  # Handle bullets
+            bullet_items.append(ListItem(Paragraph(stripped_line[1:].strip(), content_style)))
+        elif "**" in stripped_line:  # Handle bold text
             bold_line = re.sub(r"\*\*(.+?)\*\*", r"<b>\1</b>", stripped_line)
             elements.append(Paragraph(bold_line, content_style))
         else:  # Regular paragraph
-            if bullet_list:  # Add bullet points if any
-                elements.append(ListFlowable(bullet_list, bulletType='bullet', style=list_style))
-                bullet_list = []
+            if bullet_items:  # Add bullet list if present
+                elements.append(ListFlowable(bullet_items, bulletType='bullet', style=bullet_list_style))
+                bullet_items = []
             elements.append(Paragraph(stripped_line, content_style))
 
-    # Add any remaining bullet points
-    if bullet_list:
-        elements.append(ListFlowable(bullet_list, bulletType='bullet', style=list_style))
+    # Add any remaining bullet list
+    if bullet_items:
+        elements.append(ListFlowable(bullet_items, bulletType='bullet', style=bullet_list_style))
 
     # Build the PDF
     doc.build(elements)
-
     buffer.seek(0)
     return buffer
+
     
 class DocumentProcessor:
     def __init__(self, api_key: str):
