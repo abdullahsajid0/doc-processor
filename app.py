@@ -10,7 +10,7 @@ from io import BytesIO
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from reportlab.lib import colors
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle, ListStyle
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image, ListItem, ListFlowable, ListItem, Preformatted
 from reportlab.lib.units import inch
 import time
@@ -237,6 +237,7 @@ st.markdown("""
         }
     </style>
 """, unsafe_allow_html=True)
+
 def generate_styled_pdf(title: str, content: str, timestamp: str) -> BytesIO:
     """Generate a styled PDF with support for bullet points, bold text, numbered lists, and code blocks."""
     buffer = BytesIO()
@@ -292,6 +293,9 @@ def generate_styled_pdf(title: str, content: str, timestamp: str) -> BytesIO:
         spaceAfter=6
     )
 
+    # Bullet list style
+    list_style = ListStyle('CustomListStyle')
+
     # Build the PDF content
     elements = []
 
@@ -329,13 +333,13 @@ def generate_styled_pdf(title: str, content: str, timestamp: str) -> BytesIO:
             elements.append(Paragraph(bold_line, content_style))
         else:  # Regular paragraph
             if bullet_list:  # Add bullet points if any
-                elements.append(ListFlowable(bullet_list, bulletType='bullet', style=content_style))
+                elements.append(ListFlowable(bullet_list, bulletType='bullet', style=list_style))
                 bullet_list = []
             elements.append(Paragraph(stripped_line, content_style))
 
     # Add any remaining bullet points
     if bullet_list:
-        elements.append(ListFlowable(bullet_list, bulletType='bullet', style=content_style))
+        elements.append(ListFlowable(bullet_list, bulletType='bullet', style=list_style))
 
     # Build the PDF
     doc.build(elements)
