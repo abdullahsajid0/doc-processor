@@ -419,7 +419,7 @@ class DocumentProcessor:
 
             chat_completion = self.client.chat.completions.create(
                 messages=[{"role": "user", "content": prompt_content}],
-                model="meta-llama/llama-4-maverick-17b-128e-instruct",
+                model="llama-4-maverick-17b-128e-instruct",
             )
             return chat_completion.choices[0].message.content
 
