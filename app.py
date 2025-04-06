@@ -419,7 +419,7 @@ class DocumentProcessor:
 
             chat_completion = self.client.chat.completions.create(
                 messages=[{"role": "user", "content": prompt_content}],
-                model="llama-3.3-70b-versatile",
+                model="deepseek-r1-distill-qwen-32b",
             )
             return chat_completion.choices[0].message.content
 
